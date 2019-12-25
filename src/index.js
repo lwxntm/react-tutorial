@@ -100,6 +100,7 @@ class Game extends React.Component {
             );
         });
 
+
         let status;
         if (winner) {
             status = 'Winner: ' + winner;
