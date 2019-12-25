@@ -88,7 +88,7 @@ class Game extends React.Component {
     }
     transXY(i) {
         let Y = i % 3 + 1;
-        let X = Math.floor((i - i % 3) / 3) + 1;
+        let X = (i - i % 3) / 3 + 1;
 
         return ` (${X}, ${Y})`;
     }
@@ -107,7 +107,7 @@ class Game extends React.Component {
                 'go to game start';
             return (
                 <li key={move * 2}>
-                    <button onClick={() => {
+                    <button style={{fontWeight: this.state.stepNumber===move? "bold":"normal"}} onClick={() => {
                         this.jumpTo(move)
                     }}>{desc}</button>
                 </li>

@@ -2,14 +2,14 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 Just a homework of [https://zh-hans.reactjs.org/tutorial/tutorial.html](https://zh-hans.reactjs.org/tutorial/tutorial.html)
 
-1:在游戏历史记录列表显示每一步棋的坐标，格式为 (列号, 行号)。  
+### 1: 在游戏历史记录列表显示每一步棋的坐标，格式为 (列号, 行号)。  
 解法：
 * 在`Game`的构造函数中添加`moveHistory`状态，是一个空数组。
 * 添加一个函数：`transXY(i)`，代码如下：  
 ```
 transXY(i) {
           let Y = i % 3 + 1;
-          let X = Math.floor((i - i % 3) / 3) + 1;
+          let X = (i - i % 3) / 3 + 1;
   
           return ` (${X}, ${Y})`;
       }
@@ -23,3 +23,16 @@ transXY(i) {
     'go to game start';
   ```
     
+### 2:在历史记录列表中加粗显示当前选择的项目。
+参考此文章：https://www.w3ctech.com/topic/1881 学习了如何为jsx设置样式之后，修改`Game.render()`中的一句代码搞定：
+```
+ return (
+                <li key={move}>
+                    <button 
+                    style={{fontWeight: this.state.stepNumber===move? "bold":"normal"}} 
+                    onClick={() => this.jumpTo(move)}
+                    >
+                    {desc}</button>
+                </li>
+            );
+ ```
