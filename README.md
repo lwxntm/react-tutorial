@@ -97,5 +97,71 @@ transXY(i) {
                );
 
   
-每当有人获胜时，高亮显示连成一线的 3 颗棋子。  
+### 每当有人获胜时，高亮显示连成一线的 3 颗棋子。  
+思路：首先思考在什么地方实现这个功能，一开始想的是在外部的`calculateWinner`函数里实现，但是发现难度做实有点复杂，自己都看不懂自己写出来都什么东西。。由于代码中status存在winner的判断逻辑，所以我直接在后面加上了此功能的实现，另外，除了如何渲染出高亮效果的逻辑，首先要知道到底是哪三个棋子连成一条线了，所以还要改造一下判断`calculateWinner`函数：
+    
+    function calculateWinner(squares) {
+    //写死的逻辑不变，修改为返回一个对象，result代表之前的返回值，添加一个lineMember是连成线的三个位置号。
+    for (let i = 0; i < lines.length; i++) {
+        const [a, b, c] = lines[i];
+        if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+            return {result:squares[a],lineMember:lines[i]}
+            ;
+        }
+    }
+    return {result:null,lineMember:null};
+    }
+然后是修改`Game.render()`:  
+
+        //其他不变，当存在胜利玩家时把胜利玩家的位置记录下来
+        let lineMember=[];
+            if (winner) {
+                lineMember=calculateWinner(current.squares).lineMember;
+                status = 'Winner: ' + winner;
+            }
+        //...........
+        //然后在board类里添加一个props是刚才记录下来的位置。
+        return (
+                    <div className="game">
+                        <div className="game-board">
+                            <Board
+                                successLineMember={lineMember}
+                                squares={current.squares} status={status} onClick={(i) => {
+                                this.handleClick(i)
+                            }}/>
+                        </div>
+                        //其他不变
+                );
+然后修改`Board.renderSquare(i)`，这里是精细化square组件的最小部分：  
+
+    renderSquare(i) {
+            let isLineMember=false;
+            for (let j = 0; j <this.props.successLineMember.length; j++) {
+                if (i===this.props.successLineMember[j]){
+                    isLineMember=true;
+                }
+            }
+            return <Square
+                isLineMember={isLineMember}
+                value={this.props.squares[i]}
+                onClick={() => this.props.onClick(i)}
+            />;
+        }
+
+最后是`square`组件，添加你自己喜欢的高亮方法吧，我自己是直接把背景色改成红色：  
+
+    function Square(props) {
+        let color=props.isLineMember?'red':'white';
+        return (
+            <button
+                className='square'
+                onClick={props.onClick}
+                style={{backgroundColor:color}}
+            >
+                {props.value}
+            </button>);
+    
+    
+    }
+  
 当无人获胜时，显示一个平局的消息  
