@@ -3,12 +3,12 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 function Square(props) {
-    let color=props.isLineMember?'red':'white';
+    let color = props.isLineMember ? 'red' : 'white';
     return (
         <button
             className='square'
             onClick={props.onClick}
-            style={{backgroundColor:color}}
+            style={{backgroundColor: color}}
         >
             {props.value}
         </button>);
@@ -19,10 +19,10 @@ function Square(props) {
 class Board extends React.Component {
 
     renderSquare(i) {
-        let isLineMember=false;
-        for (let j = 0; j <this.props.successLineMember.length; j++) {
-            if (i===this.props.successLineMember[j]){
-                isLineMember=true;
+        let isLineMember = false;
+        for (let j = 0; j < this.props.successLineMember.length; j++) {
+            if (i === this.props.successLineMember[j]) {
+                isLineMember = true;
             }
         }
         return <Square
@@ -47,9 +47,9 @@ class Board extends React.Component {
 
     render() {
         return (
-                <div className="board-row">
-                    {this.renderInner(3)}
-                </div>
+            <div className="board-row">
+                {this.renderInner(3)}
+            </div>
         );
     }
 }
@@ -62,7 +62,7 @@ class Game extends React.Component {
             moveHistory: [],
             xIsNext: true,
             stepNumber: 0,
-            isOrder:true,
+            isOrder: true,
 
         };
     }
@@ -100,17 +100,18 @@ class Game extends React.Component {
     }
 
     render() {
-        function revMoves(){
-            let revMoves=[];
-            for (let i = 0; i <moves.length; i++) {
-                revMoves[i]=moves[moves.length-1-i];
+        function revMoves() {
+            let revMoves = [];
+            for (let i = 0; i < moves.length; i++) {
+                revMoves[i] = moves[moves.length - 1 - i];
             }
             return revMoves;
         }
+
         const history = this.state.history;
         const current = history[this.state.stepNumber];
         const winner = calculateWinner(current.squares).result;
-        const moves = history.map((step,  move) => {
+        const moves = history.map((step, move) => {
             const desc = move ?
                 'go to move #' + move + this.state.moveHistory[move - 1] :
                 'go to game start';
@@ -124,9 +125,9 @@ class Game extends React.Component {
         });
 
         let status;
-        let lineMember=[];
+        let lineMember = [];
         if (winner) {
-            lineMember=calculateWinner(current.squares).lineMember;
+            lineMember = calculateWinner(current.squares).lineMember;
             status = 'Winner: ' + winner;
         } else {
             status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
@@ -144,9 +145,14 @@ class Game extends React.Component {
                 </div>
                 <div className="game-info">
                     <div>{status}</div>
-                    <ol>{this.state.isOrder? moves:revMoves()}</ol>
+                    <ol>{this.state.isOrder ? moves : revMoves()}</ol>
                 </div>
-                <div><button onClick={()=>{this.setState({isOrder:!this.state.isOrder})}}>修改显示顺序</button></div>
+                <div>
+                    <button onClick={() => {
+                        this.setState({isOrder: !this.state.isOrder})
+                    }}>修改显示顺序
+                    </button>
+                </div>
             </div>
         );
     }
@@ -173,9 +179,9 @@ function calculateWinner(squares) {
     for (let i = 0; i < lines.length; i++) {
         const [a, b, c] = lines[i];
         if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-            return {result:squares[a],lineMember:lines[i]}
-            ;
+            return {result: squares[a], lineMember: lines[i]}
+                ;
         }
     }
-    return {result:null,lineMember:null};
+    return {result: null, lineMember: null};
 }
