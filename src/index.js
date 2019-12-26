@@ -24,15 +24,15 @@ class Board extends React.Component {
     }
 
     renderInner(length) {
-        let oneRow = [];
+        let inner = [];
         for (let i = 0; i < length; i++) {
-            let oneSquare = [];
+            let oneRow = [];
             for (let j = 0; j < length; j++) {
-                oneSquare.push(this.renderSquare(3 * i + j));
+                oneRow.push(this.renderSquare(3 * i + j));
             }
-            oneRow.push(<div>{oneSquare}</div>);
+            inner.push(<div>{oneRow}</div>);
         }
-        return oneRow;
+        return inner;
     }
 
 
@@ -53,7 +53,7 @@ class Game extends React.Component {
             moveHistory: [],
             xIsNext: true,
             stepNumber: 0,
-
+            isOrder:true,
         };
     }
 
@@ -79,8 +79,6 @@ class Game extends React.Component {
             stepNumber: step,
             xIsNext: (step % 2) === 0,
         });
-
-
     }
 
     transXY(i) {
@@ -96,24 +94,25 @@ class Game extends React.Component {
         const winner = calculateWinner(current.squares);
 
 
-        const moves = history.map((step, move) => {
-
-
+        const moves = history.map((step,  move) => {
             const desc = move ?
                 'go to move #' + move + this.state.moveHistory[move - 1] :
                 'go to game start';
-            // const noUsedButtonTest = <button onClick={() => {
-            //     alert('hello')
-            // }}>Hello</button>;
-
             return (
-                <li key={move * 2}>
+                <li key={move}>
                     <button style={{fontWeight: this.state.stepNumber === move ? "bold" : "normal"}} onClick={() => {
                         this.jumpTo(move)
                     }}>{desc}</button>
                 </li>
             );
         });
+        function revMoves(){
+            let revMoves=[];
+            for (let i = 0; i <moves.length; i++) {
+                revMoves[i]=moves[moves.length-1-i];
+            }
+            return revMoves;
+        }
 
 
         let status;
@@ -122,6 +121,7 @@ class Game extends React.Component {
         } else {
             status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
         }
+
 
         return (
             <div className="game">
@@ -132,8 +132,9 @@ class Game extends React.Component {
                 </div>
                 <div className="game-info">
                     <div>{status}</div>
-                    <ol>{moves}</ol>
+                    <ol>{this.state.isOrder? moves:revMoves()}</ol>
                 </div>
+                <div><button onClick={()=>{this.setState({isOrder:!this.state.isOrder})}}>修改显示顺序</button></div>
             </div>
         );
     }
