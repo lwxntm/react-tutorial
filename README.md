@@ -39,7 +39,7 @@ transXY(i) {
   
 
 
-### 使用两个循环来渲染出棋盘的格子，而不是在代码里写死（hardcode）。 
+### 3: 使用两个循环来渲染出棋盘的格子，而不是在代码里写死（hardcode）。 
  解法：这一题比较考验对jsx的熟悉程度，他需要我们用js代码渲染出具有重复性的内容，而不是直接把内容写出来，那么参考现有代码中非常明显的一个重复性内容就是`moves`了，`moves`是一个由map生成的数组，数组中的每一个元素都是一段JSX元素，所以我们也可以用代码生成一个数组然后放到div里作为棋盘。添加一个渲染函数并修改棋盘渲染相关代码：
  
     renderInner(length) {
@@ -63,7 +63,7 @@ transXY(i) {
        }
    
    
-### 添加一个可以升序或降序显示历史记录的按钮。  
+### 4: 添加一个可以升序或降序显示历史记录的按钮。  
 原本觉得很简单，历史记录应该是一个数组，直接`reverse()`就行了，然后。。。发现并不行，不知道是什么原因，猜测是无法直接修改的缘故？如果你有答案请告诉我，谢谢。然后只能想出一个很low的办法是用循环把原本的历史记录反转并存入新的数组，然后添加相关状态，添加一个按钮，根据状态判断是渲染原本的历史记录还是反转后新的历史记录。
 
      constructor(props) {
@@ -97,7 +97,7 @@ transXY(i) {
                );
 
   
-### 每当有人获胜时，高亮显示连成一线的 3 颗棋子。  
+### 5: 每当有人获胜时，高亮显示连成一线的 3 颗棋子。  
 思路：首先思考在什么地方实现这个功能，一开始想的是在外部的`calculateWinner`函数里实现，但是发现难度做实有点复杂，自己都看不懂自己写出来都什么东西。。由于代码中status存在winner的判断逻辑，所以我直接在后面加上了此功能的实现，另外，除了如何渲染出高亮效果的逻辑，首先要知道到底是哪三个棋子连成一条线了，所以还要改造一下判断`calculateWinner`函数：
     
     function calculateWinner(squares) {
@@ -164,4 +164,28 @@ transXY(i) {
     
     }
   
-当无人获胜时，显示一个平局的消息  
+### 6: 当无人获胜时，显示一个平局的消息  
+解法：这一题是比较简单的，直接修改消息相关逻辑。  这里用了个写死的10，实际上就是棋盘的下满之后的总数+1，这样做有种取巧的味道。
+
+    if (winner) {
+                lineMember = calculateWinner(current.squares).lineMember;
+                status = 'Winner: ' + winner;
+            } else { 
+               let noWinner=(this.state.history.length === 10 && !winner);
+                if (noWinner){
+                    status='It is a draw';
+                }else
+                status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+            }
+然后发现了一个bug：当下满9子的时候提示平局了，但是使用时间穿越后应该是可以继续下的，结果提示没有发生变化，这显然是不合理的。  
+然后发现我好像把原本简单的事情搞复杂了，如果下了9步并且没有winner就肯定是平局了： 
+    
+       if (winner) {
+                   lineMember = calculateWinner(current.squares).lineMember;
+                   status = 'Winner: ' + winner;
+               } else {
+                   if (this.state.stepNumber===9)
+                       status='It is a draw';
+                   else
+                   status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+               }

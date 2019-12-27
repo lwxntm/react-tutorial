@@ -130,6 +130,9 @@ class Game extends React.Component {
             lineMember = calculateWinner(current.squares).lineMember;
             status = 'Winner: ' + winner;
         } else {
+            if (this.state.stepNumber===9)
+                status='It is a draw';
+            else
             status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
         }
 
